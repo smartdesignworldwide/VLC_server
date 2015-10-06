@@ -1,0 +1,96 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1348\cocoasubrtf170
+{\fonttbl\f0\fswiss\fcharset0 ArialMT;}
+{\colortbl;\red255\green255\blue255;\red38\green38\blue38;\red255\green255\blue255;\red38\green38\blue38;
+\red0\green0\blue192;\red0\green0\blue0;}
+\margl1440\margr1440\vieww15200\viewh8400\viewkind0
+\deftab720
+\pard\pardeftab720\sl320
+
+\f0\fs24 \cf0 \expnd0\expndtw0\kerning0
+\
+VLC Lua http interface modified by smart design to include minimum buttons for operations (original files marked as _old)\
+Adding the ability to play directly from a URL (Youtube or Vimeo or anything VLC is capable of playing)\
+The interface was edited to enable sending messages to the VLC httpd Lua interface - here \expnd0\expndtw0\kerning0
+to control external devices,\expnd0\expndtw0\kerning0
+\
+It adds a Java server to monitor a TCP port, set to 9991 in this release, and make a translation of the code, and then send it on the serial port, that is static - hard coded - at this release.\
+The serial communication is done through using the JSSC library, Java Simple Serial Connector, found on github at the link below (and provided with this implementation).\
+\
+Links:\
+====\
+\pard\pardeftab720\sl320
+\cf2 \cb3 \expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 The VLC web site  . . . . . \cf4 \cb1 \expnd0\expndtw0\kerning0
+\outl0\strokewidth0 . . . . . . . . . . . . . . .\cf2 \cb3 \expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2  http://www.videolan.org/\
+\pard\pardeftab720\sl320
+\cf4 \cb1 \expnd0\expndtw0\kerning0
+\outl0\strokewidth0 The VLC Lua Commands  . . . . . . . . . . . . . . {\field{\*\fldinst{HYPERLINK "https://www.videolan.org/developers/vlc/share/lua/README.txt"}}{\fldrslt \cf2 \cb3 \expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 https://www.videolan.org/developers/vlc/share/lua/README.txt}}\cf2 \cb3 \expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 \
+\pard\pardeftab720\sl320
+\cf2 JSSC Library on Github \cf4 \cb1 \expnd0\expndtw0\kerning0
+\outl0\strokewidth0  . . . . . . . . . . . . . . . {\field{\*\fldinst{HYPERLINK "https://github.com/scream3r/java-simple-serial-connector/releases"}}{\fldrslt \cf5 \cb3 \expnd0\expndtw0\kerning0
+\ul \ulc5 \outl0\strokewidth0 \strokec5 https://github.com/scream3r/java-simple-serial-connector/releases}}\cf5 \cb3 \expnd0\expndtw0\kerning0
+\ul \ulc5 \outl0\strokewidth0 \strokec5 \
+\pard\pardeftab720\sl320
+\cf4 \cb1 \expnd0\expndtw0\kerning0
+\ulnone \outl0\strokewidth0 JSSC Library wiki . . . . . . . . . . . . . . . . . . . . {\field{\*\fldinst{HYPERLINK "https://code.google.com/p/java-simple-serial-connector/w/list"}}{\fldrslt https://code.google.com/p/java-simple-serial-connector/w/list}}\
+\
+Relevant Links:\
+============\
+RXTX Library Wiki\cf4 \expnd0\expndtw0\kerning0
+ . . . . . . . . . . . . . . . . . . . . . . .\cf4 \expnd0\expndtw0\kerning0
+ \cf4 \expnd0\expndtw0\kerning0
+. . . . . . . . . . . . . . . . . . . .\cf4 \expnd0\expndtw0\kerning0
+ {\field{\*\fldinst{HYPERLINK "http://rxtx.qbang.org/wiki/index.php/Main_Page"}}{\fldrslt http://rxtx.qbang.org/wiki/index.php/Main_Page}}\
+Smart Design \cf4 \expnd0\expndtw0\kerning0
+ . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . \cf4 \expnd0\expndtw0\kerning0
+ {\field{\*\fldinst{HYPERLINK "http://smartdesignworldwide.com/"}}{\fldrslt http://smartdesignworldwide.com/}}\
+\pard\pardeftab720\sl320
+\cf6 \expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec6 Reference Manual of the Programming Language Lua 2.1 \cf4 \expnd0\expndtw0\kerning0
+\outl0\strokewidth0  . . . . . . . . . . . \cf6 \expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec6  {\field{\*\fldinst{HYPERLINK "http://www.lua.org/manual/2.1/"}}{\fldrslt \cf4 \expnd0\expndtw0\kerning0
+\outl0\strokewidth0 http://www.lua.org/manual/2.1/}}\cf4 \expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \
+\
+Notes:\
+=========\
+This is a specific implementation of a remote control, but the modification in the controller.js and the VLM command xml file enable a new way of controlling the VLC machine and using these commands to further connect to other services and devices.\
+The specific commands in our implementation relate to controlling a TV set through the serial interface. The translation between the JS and the serial port is done in two stages.\
+The JS script uses the new VLM Serial command function to send commands the the VLC machine. \
+First step is when the VLC machine interprets the LUA script in the VLM_CMD.xml file. This file can contain a script to connect to sockets, which any application can be listening to. \
+The second step is the listening application, a java server in our case that implements a translation between the code received by the VLC script (which remained unaltered in the transaction in the VLM_CMD script) to a specific set of commands - depending on end recipient. The Java server can also be altered to carry out specific functions. In this release only translation and rerouting is done by the server. the commands are hard coded, but the code could easily changed to them read from a text/xml file that can be dynamically edited. The java server here puts the new (if any) commands on the serial port. TV is ON!\
+\
+\pard\pardeftab720\sl320
+\cf4 \expnd0\expndtw0\kerning0
+Installation:\
+=========\cf4 \expnd0\expndtw0\kerning0
+\
+\cf4 \expnd0\expndtw0\kerning0
+First, enable the HTTP interface on the VLC preferences. You may have to download it first.\
+The httpd folder in the VLC application is to be replaced. There almost all files were modified to accommodate the changes. The JS files, the HTML files and some VLM commands. If you have these modified already, it is recommended to DIFF and add the lines you think relevant. \cf4 \expnd0\expndtw0\kerning0
+\
+\pard\pardeftab720\sl320
+\cf4 \
+To keep things tidy, it was preferable to install the java server files into the httpd module. You are however free to install it wherever. The JSSC library \cf4 \expnd0\expndtw0\kerning0
+should be installed (jar file provided, but not guaranteed or supported) or kept in the same folder to compile with the server.\cf4 \expnd0\expndtw0\kerning0
+\
+\pard\pardeftab720\sl320
+\cf4 \expnd0\expndtw0\kerning0
+Edit server code to locate the appropriate serial and TCP ports (and any commands to be translated). compile with the option [-cp \'93.:jssc\'93] .run.\
+\pard\pardeftab720\sl320
+\cf4 \expnd0\expndtw0\kerning0
+Change the Index.html, and ui.js for the appropriate commands (to correspond to JAVA) \
+NOTE: VLM_CMD.xml is currently a pass thru only. The TCP port, however must be changed too to correspond to the Java server.\
+\
+\pard\pardeftab720\sl320
+\cf4 Running:\
+=======\
+Run VLC and the Java server on a machine.\
+Accessing the machine on port 8080 will open the VLC server. The buttons open and play will send tvOn commands. The stop button will turn the TV off.\
+\
+\
+\
+}
