@@ -19,6 +19,10 @@
 <  You should have received a copy of the GNU General Public License
 <  along with this program; if not, write to the Free Software
 <  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA 02110-1301, USA.
+<
+<  Modified by Karmel Al Labadi - Smart Design LLC.
+<  Oct 2015
+<
 < - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 <html>
 	<head>
@@ -39,6 +43,49 @@
 			$(function(){
 				browse();
 			})
+			$(function(){
+				$('#window_browse').dialog({
+					buttons: {
+						"<?vlc gettext("Add Link") ?>":function() {
+							if(document.getElementById("url_element").value){
+								sendCommand({
+									'command': 'in_enqueue',
+									'input': document.getElementById("url_element").value
+								});
+								// reset input box
+								document.getElementById("url_element").value = "";
+								// update playlist on server
+								setTimeout( function(){ updatePlayList(true);}, 1000);	
+							}
+						},
+
+						"<?vlc gettext("Play Link") ?>":function() {
+							if(document.getElementById("url_element").value){		
+								//sendCommand('command=in_play&input=' + document.getElementById("url_element").value, "window.location='mobile.html'");
+								
+								sendCommand({
+									'command': 'in_play',
+									'input': document.getElementById("url_element").value
+								});
+								// reset input box
+								document.getElementById("url_element").value = "";
+								// update playlist on server
+								setTimeout( function(){ updatePlayList(true);}, 1000);
+								sendCommand({
+									'command': 'fullscreen',
+								});	
+								eval("window.location='mobile.html'");
+							}
+						},
+
+						"<?vlc gettext("Cancel") ?>" : function()
+						{
+							$(this).dialog("close");
+							eval("window.location='mobile.html'");
+						}
+					}
+				});
+			});
 		</script>
 	</head>
 	<body>
@@ -47,6 +94,11 @@
 				<ol id='browse_elements' selectable="selectable">
 					<li><?vlc gettext("Play List") ?></li>
 				</ol>
+			</div>
+			<div style="padding:10px;">
+				<form action="">
+					<input style="width:100%;" id='url_element' type="text" name="url" /> <br />
+				</form>
 			</div>
 		</div>
 	</body>

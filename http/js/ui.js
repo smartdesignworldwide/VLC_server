@@ -61,6 +61,7 @@ $(function () {
     });
     $('#buttonPlay').click(function () {
         if ($(this).attr('state') == 'stopped') {
+            sendSerialCmd({'serial':'tvOn'});
             switch (current_que) {
             case 'main':
                 var id = $('.jstree-clicked', '#libraryTree').length > 0 ? $('.jstree-clicked', '#libraryTree').first().parents().first().attr('id').substr(5) : current_id;
